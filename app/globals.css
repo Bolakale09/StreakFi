@@ -5,8 +5,8 @@
 :root {
   --background: #f6f2ea;
   --foreground: #10243e;
-  --card: rgba(255, 248, 239, 0.92);
-  --card-border: rgba(16, 36, 62, 0.08);
+  --card: rgba(255, 248, 239, 0.96);
+  --card-border: rgba(16, 36, 62, 0.1);
   --body-font: "Avenir Next", "Nunito Sans", "Segoe UI", sans-serif;
   --display-font: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
 }

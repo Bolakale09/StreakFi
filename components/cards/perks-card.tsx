@@ -8,14 +8,14 @@ type PerksCardProps = {
 
 function PerkRow({ perk }: { perk: PerkItem }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-3xl bg-white/75 px-4 py-3">
+    <div className="flex items-center justify-between gap-3 rounded-3xl bg-white/82 px-4 py-3">
       <div>
         <p className="font-medium text-ink">{perk.title}</p>
-        <p className="mt-1 text-sm text-ink/65">{perk.description}</p>
+        <p className="mt-1 text-sm text-ink/74">{perk.description}</p>
       </div>
       <span
         className={`rounded-full px-3 py-1 text-xs font-semibold ${
-          perk.unlocked ? "bg-mint text-ink" : "bg-ink/10 text-ink/45"
+          perk.unlocked ? "bg-mint text-ink" : "bg-ink/12 text-ink/62"
         }`}
       >
         {perk.unlocked ? "Unlocked" : perk.requirement}
@@ -31,7 +31,7 @@ export function PerksCard({ data }: PerksCardProps) {
         <Chip className="bg-ink text-white">Token-gated perks</Chip>
         <div>
           <h3 className="text-xl font-semibold text-ink">{data.title}</h3>
-          <p className="mt-1 text-sm leading-6 text-ink/70">{data.caption}</p>
+          <p className="mt-1 text-sm leading-6 text-ink/78">{data.caption}</p>
         </div>
       </div>
 
@@ -46,7 +46,7 @@ export function PerksCard({ data }: PerksCardProps) {
           <div>
             <p
               className={`text-xs uppercase tracking-[0.24em] ${
-                data.statusTone === "unlocked" ? "text-ink/55" : "text-white/55"
+                data.statusTone === "unlocked" ? "text-ink/68" : "text-white/72"
               }`}
             >
               {data.statusLabel}
@@ -57,7 +57,7 @@ export function PerksCard({ data }: PerksCardProps) {
             className={`rounded-full px-3 py-1 text-xs font-semibold ${
               data.statusTone === "unlocked"
                 ? "bg-white/80 text-ink"
-                : "bg-white/10 text-white/80"
+                : "bg-white/14 text-white/92"
             }`}
           >
             {data.thresholdLabel}
@@ -75,7 +75,7 @@ export function PerksCard({ data }: PerksCardProps) {
 
         <div
           className={`mt-4 flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between ${
-            data.statusTone === "unlocked" ? "text-ink/70" : "text-white/70"
+            data.statusTone === "unlocked" ? "text-ink/78" : "text-white/82"
           }`}
         >
           <p>{data.helperText}</p>

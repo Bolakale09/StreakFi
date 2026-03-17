@@ -46,18 +46,18 @@ export function ReferralCard({ data }: ReferralCardProps) {
   return (
     <BaseCard className="space-y-4 bg-gradient-to-br from-white/92 via-blush/50 to-white/82">
       <div className="space-y-2">
-        <Chip className="bg-white/75">Referrals</Chip>
+        <Chip className="bg-white/82 text-ink/80">Referrals</Chip>
         <div>
           <h3 className="text-xl font-semibold text-ink">Invite friends</h3>
-          <p className="mt-1 text-sm leading-6 text-ink/70">{data.caption}</p>
+          <p className="mt-1 text-sm leading-6 text-ink/78">{data.caption}</p>
         </div>
       </div>
 
-      <div className="rounded-3xl border border-dashed border-ink/15 bg-white/70 px-4 py-3">
-        <p className="text-xs uppercase tracking-[0.24em] text-ink/45">Invite code</p>
+      <div className="rounded-3xl border border-dashed border-ink/15 bg-white/82 px-4 py-3">
+        <p className="text-xs uppercase tracking-[0.24em] text-ink/60">Invite code</p>
         <p className="mt-2 text-lg font-semibold text-ink">{data.code}</p>
-        <p className="mt-2 text-sm leading-6 text-ink/60">{data.hint}</p>
-        <p className="mt-3 truncate text-sm text-ink/50">{buildReferralUrl(data.code)}</p>
+        <p className="mt-2 text-sm leading-6 text-ink/72">{data.hint}</p>
+        <p className="mt-3 truncate text-sm text-ink/62">{buildReferralUrl(data.code)}</p>
       </div>
 
       {copied ? (

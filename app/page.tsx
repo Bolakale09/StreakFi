@@ -6,7 +6,6 @@ import { SectionHeading } from "@/components/layout/section-heading";
 import { MobileShell } from "@/components/layout/mobile-shell";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Chip } from "@/components/ui/chip";
-import { WalletConnectionControls } from "@/components/wallet/wallet-connection-controls";
 
 export default function LandingPage() {
   return (
@@ -17,8 +16,14 @@ export default function LandingPage() {
             StreakFi
           </Link>
           <div className="flex items-center gap-3">
-            <Chip className="hidden sm:inline-flex">Daily rewards on Solana</Chip>
-            <WalletConnectionControls className="flex-row flex-wrap justify-end" />
+            <Chip className="hidden sm:inline-flex">Consumer loyalty on Solana</Chip>
+            <ButtonLink
+              className="min-h-10 rounded-full border border-ink/10 bg-white/72 px-4 text-ink shadow-none"
+              href="/dashboard"
+              variant="secondary"
+            >
+              Dashboard
+            </ButtonLink>
           </div>
         </header>
 
@@ -27,8 +32,8 @@ export default function LandingPage() {
         <section className="space-y-5" id="features">
           <SectionHeading
             eyebrow="Why it works"
-            title="A simple habit loop with rewards users can feel."
-            description="StreakFi keeps the product story easy to understand: show up daily, earn a little more, and unlock more reasons to return."
+            title="A daily habit loop that feels natural."
+            description="The product story stays simple: show up, keep your streak alive, earn rewards, and unlock more value over time."
           />
           <FeatureGrid />
         </section>
@@ -37,7 +42,7 @@ export default function LandingPage() {
           <SectionHeading
             eyebrow="How it works"
             title="Three steps, one daily habit."
-            description="The flow stays friendly from the first tap. No dashboards to learn, no jargon to decode."
+            description="From the first tap to the daily return, the flow stays clear, fast, and friendly."
           />
           <FeatureSteps />
         </section>
@@ -47,18 +52,18 @@ export default function LandingPage() {
             <div className="max-w-xl space-y-2">
               <Chip className="border-white/10 bg-white/10 text-white">Ready for the demo</Chip>
               <h2 className="display-font text-3xl font-semibold leading-tight sm:text-4xl">
-                Turn the first tap into a streak users want to keep.
+                Turn one wallet connection into a daily product habit.
               </h2>
               <p className="text-sm leading-6 text-white/70 sm:text-base">
-                Connect the wallet, land in the app, and make the value obvious right away.
+                Connect, land in the dashboard, and make the product value obvious in seconds.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:w-auto sm:min-w-60">
-              <WalletConnectionControls
-                primaryClassName="min-h-12 bg-white text-ink"
-                secondaryClassName="border border-white/12 bg-white/10 text-white"
-              />
-              <ButtonLink href="#how-it-works" variant="secondary">
+              <ButtonLink
+                className="min-h-12 border border-white/24 bg-white/88 text-ink shadow-none"
+                href="#how-it-works"
+                variant="secondary"
+              >
                 See how it works
               </ButtonLink>
             </div>

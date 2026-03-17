@@ -19,14 +19,14 @@ export function DashboardHeader({
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
             <div>
-              <p className="text-sm text-ink/55">
+              <p className="text-sm text-ink/68">
                 {connected ? "Welcome back" : "Preview mode"}
               </p>
               <h1 className="display-font text-4xl font-semibold leading-none text-ink">
                 {username}
               </h1>
             </div>
-            <p className="max-w-md text-sm leading-6 text-ink/65">
+            <p className="max-w-md text-sm leading-6 text-ink/78">
               {connected
                 ? checkedInToday
                   ? "Today is locked in. Rewards, invites, and perks are all ready when you are."
@@ -44,10 +44,10 @@ export function DashboardHeader({
           <Chip className={checkedInToday ? "bg-mint text-ink" : "bg-coral/10 text-coral"}>
             {checkedInToday ? "Checked in today" : "Check-in waiting"}
           </Chip>
-          {!connected ? <Chip className="bg-white/70">Preview data</Chip> : null}
+          {!connected ? <Chip className="bg-white/82 text-ink/80">Preview data</Chip> : null}
         </div>
 
-        <div className="rounded-[1.6rem] bg-white/70 p-3">
+        <div className="rounded-[1.6rem] bg-white/82 p-3">
           <WalletConnectionControls />
         </div>
       </div>

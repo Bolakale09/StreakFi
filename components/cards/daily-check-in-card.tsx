@@ -44,7 +44,7 @@ export function DailyCheckInCard({
         >
           <p
             className={`text-xs uppercase tracking-[0.24em] ${
-              data.checkedIn ? "text-ink/55" : "text-white/70"
+              data.checkedIn ? "text-ink/68" : "text-white/82"
             }`}
           >
             Streak
@@ -54,8 +54,8 @@ export function DailyCheckInCard({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-3xl bg-white/75 p-4">
-          <div className="flex items-center justify-between text-sm text-ink/65">
+        <div className="rounded-3xl bg-white/82 p-4">
+          <div className="flex items-center justify-between text-sm text-ink/78">
             <span>Next reward unlock</span>
             <span>{data.nextRewardLabel}</span>
           </div>
@@ -69,10 +69,10 @@ export function DailyCheckInCard({
           </div>
         </div>
 
-        <div className="rounded-3xl bg-white/75 p-4">
-          <p className="text-xs uppercase tracking-[0.22em] text-ink/45">Today</p>
+        <div className="rounded-3xl bg-white/82 p-4">
+          <p className="text-xs uppercase tracking-[0.22em] text-ink/60">Today</p>
           <p className="mt-2 text-lg font-semibold text-ink">{data.rewardToday}</p>
-          <p className="mt-2 text-sm leading-6 text-ink/60">{data.checkInWindow}</p>
+          <p className="mt-2 text-sm leading-6 text-ink/72">{data.checkInWindow}</p>
         </div>
       </div>
 
@@ -84,7 +84,7 @@ export function DailyCheckInCard({
         >
           {isSubmitting ? "Saving today's check-in..." : data.ctaLabel}
         </Button>
-        <div className="rounded-2xl bg-white/75 px-4 py-4 text-sm text-ink/65 sm:min-w-48">
+        <div className="rounded-2xl bg-white/82 px-4 py-4 text-sm text-ink/75 sm:min-w-48">
           {actionHint ||
             (data.checkedIn
               ? "Come back tomorrow for your next check-in."
@@ -108,7 +108,7 @@ export function DailyCheckInCard({
             </div>
             <div>
               <p className="font-semibold text-ink">{feedback.title}</p>
-              <p className="mt-1 text-sm leading-6 text-ink/70">{feedback.description}</p>
+              <p className="mt-1 text-sm leading-6 text-ink/78">{feedback.description}</p>
             </div>
           </div>
         </div>

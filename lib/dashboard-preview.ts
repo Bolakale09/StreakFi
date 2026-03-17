@@ -23,10 +23,10 @@ export function buildWalletPreviewDashboard(walletAddress: string): DashboardDat
     streakGoal: "Start your first streak today",
     checkIn: {
       checkedIn: false,
-      statusLabel: "Ready today",
+      statusLabel: "Demo preview",
       title: "Your first check-in is ready",
       description:
-        "Connect your wallet, finish setup, and this screen becomes your live daily streak home.",
+        "This wallet is connected and ready. Your live streak home starts with the first check-in.",
       streakCount: "0",
       nextRewardLabel: nextBonus,
       progressPercent: 0,
@@ -36,7 +36,7 @@ export function buildWalletPreviewDashboard(walletAddress: string): DashboardDat
     },
     rewards: {
       balance: "0",
-      caption: "Your rewards will start stacking as soon as live check-ins are saved.",
+      caption: "Your reward balance starts moving as soon as your first live check-in is saved.",
       weeklyEarned: "+0 pts",
       nextCashout: nextBonus,
       todayEarned: "+0 pts",
@@ -49,7 +49,7 @@ export function buildWalletPreviewDashboard(walletAddress: string): DashboardDat
       joinedCount: "0 joined",
       pendingBonus: "0 pts",
       shareLabel: "Share my code",
-      hint: "Invite links will start tracking once the Supabase schema is set up.",
+      hint: "Invite links will start tracking as soon as live user data is saved.",
     },
     perks: {
       title: "Unlock premium perks",

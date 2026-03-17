@@ -2,17 +2,17 @@ const steps = [
   {
     title: "Connect your wallet",
     description:
-      "Start in one tap and drop people straight into a clean home screen with their streak front and center.",
+      "Start in one tap and drop people straight into a clean daily home screen.",
   },
   {
     title: "Check in each day",
     description:
-      "Keep the action simple. A quick daily check-in grows the streak and makes the next reward feel close.",
+      "One quick check-in keeps the streak moving and makes the next reward feel close.",
   },
   {
     title: "Unlock more over time",
     description:
-      "As rewards build, referrals land, and perks open up, the app gives users more reasons to come back.",
+      "Rewards, referrals, and perks give users more reasons to come back tomorrow.",
   },
 ];
 
