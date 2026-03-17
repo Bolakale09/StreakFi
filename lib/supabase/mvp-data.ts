@@ -514,8 +514,8 @@ export async function recordDailyCheckIn(
 }
 
 export async function getDashboardSnapshot(walletAddress: string, referralCode?: string | null) {
-  const [user, checkIns, rewards, referrals, tokenGate] = await Promise.all([
-    getOrCreateUserByWallet(walletAddress, referralCode),
+  const user = await getOrCreateUserByWallet(walletAddress, referralCode);
+  const [checkInsResult, rewardsResult, referralsResult, tokenGateResult] = await Promise.allSettled([
     listCheckIns(walletAddress, 14),
     listRewards(walletAddress, 10),
     listReferrals(walletAddress, 10),
@@ -524,9 +524,21 @@ export async function getDashboardSnapshot(walletAddress: string, referralCode?:
 
   return {
     user,
-    checkIns,
-    rewards,
-    referrals,
-    tokenGate,
+    checkIns: checkInsResult.status === "fulfilled" ? checkInsResult.value : [],
+    rewards: rewardsResult.status === "fulfilled" ? rewardsResult.value : [],
+    referrals: referralsResult.status === "fulfilled" ? referralsResult.value : [],
+    tokenGate:
+      tokenGateResult.status === "fulfilled"
+        ? tokenGateResult.value
+        : {
+            isConfigured: false,
+            isEligible: false,
+            currentBalance: 0,
+            threshold: 25,
+            tokenSymbol: "STREAK",
+            mintAddress: null,
+            statusLabel: "Perks locked",
+            helperText: "Token holdings could not be verified right now.",
+          },
   };
 }

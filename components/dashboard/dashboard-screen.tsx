@@ -12,6 +12,8 @@ import { DashboardLoading } from "@/components/dashboard/dashboard-loading";
 import { useReferralCode } from "@/components/referral/use-referral-code";
 import { SectionHeading } from "@/components/layout/section-heading";
 import { Chip } from "@/components/ui/chip";
+import { buildWalletPreviewDashboard } from "@/lib/dashboard-preview";
+import { getUserFacingDataErrorMessage } from "@/lib/errors";
 import { dashboardMockData } from "@/lib/mock-data";
 import type { CheckInFeedback } from "@/lib/dashboard-view";
 import type { DashboardData } from "@/lib/types";
@@ -42,6 +44,8 @@ export function DashboardScreen() {
   const referralCode = useReferralCode();
 
   const walletAddress = publicKey?.toBase58() ?? null;
+  const hasSchemaSetupError =
+    errorMessage?.includes("Supabase schema is not set up yet") ?? false;
 
   useEffect(() => {
     if (!connected || !walletAddress) {
@@ -54,6 +58,7 @@ export function DashboardScreen() {
 
     let ignore = false;
     const activeWalletAddress = walletAddress;
+    setDashboard(buildWalletPreviewDashboard(activeWalletAddress));
 
     async function loadDashboard() {
       setIsLoading(true);
@@ -74,7 +79,9 @@ export function DashboardScreen() {
         }
 
         if (!response.ok) {
-          setErrorMessage(data.error || "Unable to load dashboard.");
+          setErrorMessage(
+            getUserFacingDataErrorMessage(data.error || "Unable to load dashboard."),
+          );
           return;
         }
 
@@ -120,7 +127,9 @@ export function DashboardScreen() {
         const data = await readResponseJson<CheckInApiResponse>(response);
 
         if (!response.ok) {
-          setErrorMessage(data.error || "Unable to complete today's check-in.");
+          setErrorMessage(
+            getUserFacingDataErrorMessage(data.error || "Unable to complete today's check-in."),
+          );
           return;
         }
 
@@ -136,6 +145,8 @@ export function DashboardScreen() {
   const showInitialLoading = connected && isLoading && !hasLoadedLiveDashboard;
   const actionHint = !connected
     ? "Connect your wallet to make this your live daily check-in."
+    : hasSchemaSetupError
+      ? "Run the Supabase migration first, then this check-in button will save real streak data."
     : isLoading
       ? "Refreshing your streak, rewards, and perks..."
       : dashboard.checkIn.checkedIn
@@ -218,7 +229,7 @@ export function DashboardScreen() {
         <DailyCheckInCard
           actionHint={actionHint}
           data={dashboard.checkIn}
-          disabled={!connected || isLoading}
+          disabled={!connected || isLoading || hasSchemaSetupError}
           feedback={feedback}
           isSubmitting={isCheckingIn}
           onCheckIn={handleCheckIn}

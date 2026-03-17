@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { buildCheckInFeedback, buildDashboardViewModel } from "@/lib/dashboard-view";
+import { buildWalletPreviewDashboard } from "@/lib/dashboard-preview";
+import { getErrorMessage } from "@/lib/errors";
 import { normalizeWalletAddress } from "@/lib/solana";
 import { normalizeReferralCode } from "@/lib/referrals";
 import { getDashboardSnapshot, recordDailyCheckIn } from "@/lib/supabase/mvp-data";
+import { getTokenGateStatus } from "@/lib/token-gating";
 
 type CheckInRequestBody = {
   walletAddress?: string;
@@ -10,14 +13,14 @@ type CheckInRequestBody = {
 };
 
 export async function POST(request: Request) {
+  let normalizedWalletAddress = "";
+
   try {
     const body = (await request.json()) as CheckInRequestBody;
 
     if (!body.walletAddress) {
       return NextResponse.json({ error: "walletAddress is required" }, { status: 400 });
     }
-
-    let normalizedWalletAddress: string;
 
     try {
       normalizedWalletAddress = normalizeWalletAddress(body.walletAddress);
@@ -33,10 +36,23 @@ export async function POST(request: Request) {
       undefined,
       normalizedReferralCode,
     );
-    const snapshot = await getDashboardSnapshot(normalizedWalletAddress, normalizedReferralCode);
+    let dashboard;
+
+    try {
+      const snapshot = await getDashboardSnapshot(normalizedWalletAddress, normalizedReferralCode);
+      dashboard = buildDashboardViewModel(snapshot);
+    } catch {
+      dashboard = buildDashboardViewModel({
+        user: checkInResult.user,
+        checkIns: [checkInResult.checkIn],
+        rewards: checkInResult.rewards,
+        referrals: [],
+        tokenGate: await getTokenGateStatus(normalizedWalletAddress),
+      });
+    }
 
     return NextResponse.json({
-      dashboard: buildDashboardViewModel(snapshot),
+      dashboard,
       feedback: buildCheckInFeedback({
         alreadyCheckedIn: checkInResult.alreadyCheckedIn,
         currentStreak: checkInResult.user.current_streak,
@@ -46,8 +62,11 @@ export async function POST(request: Request) {
       }),
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unable to record check-in";
+    const message = getErrorMessage(error, "Unable to record check-in");
 
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json(
+      { error: message, dashboard: buildWalletPreviewDashboard(normalizedWalletAddress ?? "") },
+      { status: 500 },
+    );
   }
 }

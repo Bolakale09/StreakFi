@@ -52,7 +52,7 @@ function getProgressPercent(currentStreak: number) {
   const remainder = currentStreak % bonusWindow;
   const steps = remainder === 0 && currentStreak > 0 ? bonusWindow : remainder;
 
-  return Math.max(12, Math.round((steps / bonusWindow) * 100));
+  return Math.min(100, Math.round((steps / bonusWindow) * 100));
 }
 
 function getReferralSummary(referrals: ReferralRow[]) {
@@ -70,7 +70,7 @@ function getPerksProgressPercent(currentBalance: number, threshold: number) {
     return 100;
   }
 
-  return Math.max(8, Math.min(100, Math.round((currentBalance / threshold) * 100)));
+  return Math.min(100, Math.round((currentBalance / threshold) * 100));
 }
 
 export function buildDashboardViewModel(snapshot: DashboardSnapshot): DashboardData {

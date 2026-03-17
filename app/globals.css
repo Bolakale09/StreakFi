@@ -51,7 +51,7 @@ select {
 }
 
 .glass-card {
-  background: var(--card);
+  background-color: var(--card);
   backdrop-filter: blur(14px);
   border: 1px solid var(--card-border);
 }

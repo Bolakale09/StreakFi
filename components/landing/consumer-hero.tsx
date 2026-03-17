@@ -1,8 +1,101 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { buildWalletPreviewDashboard } from "@/lib/dashboard-preview";
+import { dashboardMockData } from "@/lib/mock-data";
+import {
+  normalizeReferralCode,
+  readStoredReferralCode,
+  REFERRAL_QUERY_PARAM,
+} from "@/lib/referrals";
+import type { DashboardData } from "@/lib/types";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Chip } from "@/components/ui/chip";
 import { WalletConnectionControls } from "@/components/wallet/wallet-connection-controls";
 
+type DashboardApiResponse = {
+  dashboard: DashboardData;
+  error?: string;
+};
+
+function getLandingReferralCode() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const queryReferralCode = new URLSearchParams(window.location.search).get(REFERRAL_QUERY_PARAM);
+
+  if (queryReferralCode) {
+    return normalizeReferralCode(queryReferralCode);
+  }
+
+  return readStoredReferralCode();
+}
+
 export function ConsumerHero() {
+  const { connected, publicKey } = useWallet();
+  const [dashboard, setDashboard] = useState<DashboardData>(dashboardMockData);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const walletAddress = publicKey?.toBase58() ?? null;
+
+  useEffect(() => {
+    if (!connected || !walletAddress) {
+      setDashboard(dashboardMockData);
+      setIsLoading(false);
+      return;
+    }
+
+    let ignore = false;
+    const activeWalletAddress = walletAddress;
+    const referralCode = getLandingReferralCode();
+    const referralQuery = referralCode ? `&ref=${encodeURIComponent(referralCode)}` : "";
+    setDashboard(buildWalletPreviewDashboard(activeWalletAddress));
+    setIsLoading(true);
+
+    async function loadHeroPreview() {
+      try {
+        const response = await fetch(
+          `/api/dashboard?walletAddress=${encodeURIComponent(activeWalletAddress)}${referralQuery}`,
+          {
+            cache: "no-store",
+          },
+        );
+        const data = (await response.json()) as DashboardApiResponse;
+
+        if (ignore) {
+          return;
+        }
+
+        if (response.ok && data.dashboard) {
+          setDashboard(data.dashboard);
+        }
+      } catch {
+        // Keep the wallet-based preview state when live sync is unavailable.
+      } finally {
+        if (!ignore) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void loadHeroPreview();
+
+    return () => {
+      ignore = true;
+    };
+  }, [connected, walletAddress]);
+
+  const primaryPerk = dashboard.perks.items[0];
+  const walletChipLabel = !connected
+    ? "Preview"
+    : isLoading
+      ? "Syncing"
+      : dashboard.checkIn.checkedIn
+        ? "Checked in"
+        : "Wallet on";
+
   return (
     <section className="relative overflow-hidden rounded-[2.5rem] bg-ink px-5 py-6 text-white shadow-soft sm:px-8 sm:py-8">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(181,240,219,0.22),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(255,124,91,0.24),transparent_30%)]" />
@@ -30,10 +123,10 @@ export function ConsumerHero() {
             <WalletConnectionControls
               className="sm:flex-row"
               primaryClassName="min-h-14 bg-white text-base text-ink"
-              secondaryClassName="border border-white/12 bg-white/10 text-base text-white"
+              secondaryClassName="border border-white/20 bg-white/88 text-base text-ink"
             />
             <ButtonLink
-              className="min-h-14 border border-white/12 bg-white/10 text-base text-white sm:w-fit"
+              className="min-h-14 border border-white/20 bg-white/88 text-base text-ink sm:w-fit"
               href="/dashboard"
               variant="secondary"
             >
@@ -42,19 +135,19 @@ export function ConsumerHero() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-[1.6rem] border border-white/10 bg-white/10 px-4 py-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.22em] text-white/50">Check in</p>
-              <p className="mt-2 text-sm leading-6 text-white/80">One clear action every day.</p>
+            <div className="rounded-[1.6rem] border border-white/14 bg-white/14 px-4 py-4 backdrop-blur">
+              <p className="text-xs uppercase tracking-[0.22em] text-white/62">Check in</p>
+              <p className="mt-2 text-sm leading-6 text-white/90">One clear action every day.</p>
             </div>
-            <div className="rounded-[1.6rem] border border-white/10 bg-white/10 px-4 py-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.22em] text-white/50">Earn more</p>
-              <p className="mt-2 text-sm leading-6 text-white/80">
+            <div className="rounded-[1.6rem] border border-white/14 bg-white/14 px-4 py-4 backdrop-blur">
+              <p className="text-xs uppercase tracking-[0.22em] text-white/62">Earn more</p>
+              <p className="mt-2 text-sm leading-6 text-white/90">
                 Rewards grow with momentum.
               </p>
             </div>
-            <div className="rounded-[1.6rem] border border-white/10 bg-white/10 px-4 py-4 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.22em] text-white/50">Unlock perks</p>
-              <p className="mt-2 text-sm leading-6 text-white/80">Keep the app feeling alive.</p>
+            <div className="rounded-[1.6rem] border border-white/14 bg-white/14 px-4 py-4 backdrop-blur">
+              <p className="text-xs uppercase tracking-[0.22em] text-white/62">Unlock perks</p>
+              <p className="mt-2 text-sm leading-6 text-white/90">Keep the app feeling alive.</p>
             </div>
           </div>
         </div>
@@ -66,48 +159,73 @@ export function ConsumerHero() {
               <div className="flex items-center justify-between rounded-[1.6rem] bg-ink px-4 py-4 text-white">
                 <div>
                   <p className="text-xs uppercase tracking-[0.24em] text-white/55">Current streak</p>
-                  <p className="display-font mt-2 text-5xl leading-none">12</p>
+                  <p className="display-font mt-2 text-5xl leading-none">
+                    {dashboard.currentStreak}
+                  </p>
                 </div>
                 <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold">
-                  Wallet on
+                  {walletChipLabel}
                 </span>
               </div>
 
               <div className="mt-4 space-y-3">
                 <div className="rounded-[1.6rem] bg-blush/60 p-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-ink">Daily reward</p>
-                    <span className="rounded-full bg-coral px-3 py-1 text-xs font-semibold text-white">
-                      Ready
+                    <p className="text-sm font-semibold text-ink">{dashboard.checkIn.title}</p>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                        dashboard.checkIn.checkedIn
+                          ? "bg-mint text-ink"
+                          : "bg-coral text-white"
+                      }`}
+                    >
+                      {dashboard.checkIn.statusLabel}
                     </span>
                   </div>
                   <p className="mt-3 text-sm leading-6 text-ink/70">
-                    Check in today and keep your bonus multiplier moving.
+                    {dashboard.checkIn.description}
                   </p>
                   <div className="mt-3 h-2 rounded-full bg-ink/10">
-                    <div className="h-2 w-4/5 rounded-full bg-coral" />
+                    <div
+                      className={`h-2 rounded-full ${
+                        dashboard.checkIn.checkedIn ? "bg-mint" : "bg-coral"
+                      }`}
+                      style={{ width: `${dashboard.checkIn.progressPercent}%` }}
+                    />
                   </div>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-[1.4rem] bg-sky/70 p-4">
                     <p className="text-xs uppercase tracking-[0.2em] text-ink/45">Rewards</p>
-                    <p className="mt-2 text-2xl font-semibold text-ink">240 pts</p>
+                    <p className="mt-2 text-2xl font-semibold text-ink">
+                      {dashboard.rewards.balance} pts
+                    </p>
                   </div>
                   <div className="rounded-[1.4rem] bg-mint/70 p-4">
                     <p className="text-xs uppercase tracking-[0.2em] text-ink/45">Referrals</p>
-                    <p className="mt-2 text-2xl font-semibold text-ink">4 joined</p>
+                    <p className="mt-2 text-2xl font-semibold text-ink">
+                      {dashboard.referrals.joinedCount}
+                    </p>
                   </div>
                 </div>
 
                 <div className="rounded-[1.6rem] border border-ink/8 bg-white p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-semibold text-ink">Perks unlocked</p>
-                      <p className="mt-1 text-sm text-ink/60">Priority reward drop</p>
+                      <p className="text-sm font-semibold text-ink">{dashboard.perks.statusLabel}</p>
+                      <p className="mt-1 text-sm text-ink/60">
+                        {primaryPerk ? primaryPerk.title : dashboard.perks.thresholdLabel}
+                      </p>
                     </div>
-                    <span className="rounded-full bg-mint px-3 py-1 text-xs font-semibold text-ink">
-                      Active
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                        dashboard.perks.statusTone === "unlocked"
+                          ? "bg-mint text-ink"
+                          : "bg-ink/10 text-ink/55"
+                      }`}
+                    >
+                      {dashboard.perks.statusTone === "unlocked" ? "Active" : "Locked"}
                     </span>
                   </div>
                 </div>

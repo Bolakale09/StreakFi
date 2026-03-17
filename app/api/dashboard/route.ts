@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { buildDashboardViewModel } from "@/lib/dashboard-view";
+import { getErrorMessage } from "@/lib/errors";
 import { normalizeWalletAddress } from "@/lib/solana";
 import { normalizeReferralCode, REFERRAL_QUERY_PARAM } from "@/lib/referrals";
 import { getDashboardSnapshot } from "@/lib/supabase/mvp-data";
@@ -33,7 +34,7 @@ export async function GET(request: Request) {
       dashboard: buildDashboardViewModel(snapshot),
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unable to load dashboard";
+    const message = getErrorMessage(error, "Unable to load dashboard");
 
     return NextResponse.json({ error: message }, { status: 500 });
   }

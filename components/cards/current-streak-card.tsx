@@ -7,11 +7,27 @@ type CurrentStreakCardProps = {
   streakGoal: string;
 };
 
+function getStreakProgressPercent(currentStreak: string) {
+  const streakValue = Number.parseInt(currentStreak, 10);
+
+  if (!Number.isFinite(streakValue) || streakValue <= 0) {
+    return 0;
+  }
+
+  const interval = 7;
+  const remainder = streakValue % interval;
+  const completedSteps = remainder === 0 ? interval : remainder;
+
+  return Math.min(100, Math.round((completedSteps / interval) * 100));
+}
+
 export function CurrentStreakCard({
   currentStreak,
   bestStreak,
   streakGoal,
 }: CurrentStreakCardProps) {
+  const streakProgressPercent = getStreakProgressPercent(currentStreak);
+
   return (
     <BaseCard className="space-y-5 overflow-hidden bg-gradient-to-br from-ink via-[#18375d] to-[#214870] text-white">
       <div className="flex items-start justify-between gap-4">
@@ -38,7 +54,10 @@ export function CurrentStreakCard({
           <span>{streakGoal}</span>
         </div>
         <div className="mt-3 h-2 rounded-full bg-white/10">
-          <div className="h-2 w-4/5 rounded-full bg-coral" />
+          <div
+            className="h-2 rounded-full bg-coral transition-all"
+            style={{ width: `${streakProgressPercent}%` }}
+          />
         </div>
         <p className="mt-3 text-sm text-white/70">
           Keep showing up daily to stack rewards and unlock bigger moments.
